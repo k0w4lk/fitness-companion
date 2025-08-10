@@ -1,27 +1,71 @@
-# Authentication
+# Аутентификация
 
-## US-1: As a user, I want to register in app via email to access relevant functionality
+## US-1: Как пользователь, я хочу зарегистрировать аккаунт в приложении, чтобы получить доступ к его функционалу
 
-### Features:  
+### Регистрация по email и паролю
+**Клиент**  
+1. Переход на страницу регистрации `/auth/register` осуществляется следующими способами: 
+   - При запуске клиента, если в браузере нет сохраненных данных пользователя (JWT-токены)
+   - При намеренном выходе из аккаунта
+   - При истечении срока действия токенов
 
-- #### Email + password registration:  
-    **AC**  
-    1. [FE] On client startup if there is no stored user data register page is loaded (/auth/register)
-    2. [FE] By default there is register form with following units:
-       - title (L-1)
-       - first name input
-       - last name input
-       - email input
-       - password input
-       - password confirm input
-       - Client/Trainer radio buttons  
-       - Submit button
-       - link to login page
-    3. [FE] By clicking on *Submit button* app sends [POST register request](/docs/technical/auth-api.md).
-    4. [BE] on recieving register request server validates payload and creates user into users table
-    5. On success user need to be redirected to his profile page. On error there is alert with error message.
+2. Форма регистрации содержит:  
+   - Заголовок (i18n-1)  
+   - Поле ввода имени (i18n-2)  
+   - Поле ввода фамилии (i18n-3)  
+   - Поле ввода email (i18n-4)  
+   - Поле ввода пароля (i18n-5)  
+   - Поле подтверждения пароля (i18n-6)  
+   - Радиокнопки "Клиент/Тренер" (i18n-7/i18n-8)  
+   - Кнопка регистрации (i18n-9) 
+   - Ссылка на страницу входа (i18n-10)  
 
-### I18n
- ||RU|
- |-|--|
- |1|Регистрация|
+3. Поля формы валидируются динамически:
+   - Имя/фамилия: минимум 2 символа (i18n-11)
+   - Email: валидный формат (i18n-12)
+   - Пароль: 8+ символов, 1 цифра (i18n-13)
+
+4. При нажатии на *кнопку регистрации*:
+   - Отправляется [POST-запрос на регистрацию](/docs/technical/auth-api.md)
+   - Кнопка блокируется и отображается индикатор загрузки (i18n-14)
+
+5. Результат выполнения запроса:  
+   - **Успех**:
+     - Отображение инструкций по верификации email (i18n-15)  
+   - **Ошибка**:  
+     - Показ сообщения об ошибке (i18n-16)  
+     - Указание на проблемные поля (i18n-17)  
+
+**Сервер**  
+1. Получив [POST-запрос на регистрацию](/docs/technical/auth-api.md), сервер:  
+   - Проверяет корректность данных  
+   - Создает запись в [таблице пользователей](/docs/technical/db/users-table.md)  
+
+2. Если нет ошибок - отправляет email с:
+   - Ссылкой для подтверждения (i18n-18)
+   - Инструкциями (i18n-19)
+   - Контактами поддержки (i18n-20)
+
+**Локализация**
+|| EN | RU |
+|-|----|----|
+|1| Registration | Регистрация |
+|2| First name | Имя |
+|3| Last name | Фамилия |
+|4| Email | Электронная почта |
+|5| Password | Пароль |
+|6| Confirm password | Подтверждение пароля |
+|7| Client | Клиент |
+|8| Trainer | Тренер |
+|9| Sign up | Зарегистрироваться |
+|10| Already have an account? | Уже есть аккаунт? |
+|11| Minimum 2 characters | Минимум 2 символа |
+|12| Invalid email format | Некорректный email |
+|13| Weak password (8+ chars, 1 number) | Слабый пароль (8+ символов, 1 цифра) |
+|14| Processing... | Обработка... |
+|15| Verification email sent | Письмо с подтверждением отправлено |
+|16| Registration failed | Ошибка регистрации |
+|17| Fix highlighted fields | Исправьте выделенные поля |
+|18| Verify your email | Подтвердите email |
+|19| Click the link to complete registration | Перейдите по ссылке для завершения регистрации |
+|20| Contact support if you didn't request this | Свяжитесь с поддержкой, если не запрашивали это |
